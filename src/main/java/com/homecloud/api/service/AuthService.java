@@ -10,6 +10,7 @@ import com.homecloud.api.transferobject.AuthResponseDTO;
 
 @Service
 public class AuthService {
+
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -49,7 +50,6 @@ public class AuthService {
     }
 
     public boolean verifyPassword(String rawPassword, String hashedPassword) {
-        String encryptedRawPassword = passwordEncoder.encode(rawPassword);
-        return passwordEncoder.matches(encryptedRawPassword, hashedPassword);
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 }

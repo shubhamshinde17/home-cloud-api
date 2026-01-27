@@ -1,15 +1,16 @@
 package com.homecloud.api.controller;
 
+import java.util.HashMap;
+import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.homecloud.api.service.AuthService;
 import com.homecloud.api.transferobject.AuthResponseDTO;
-
-import java.util.HashMap;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.homecloud.api.transferobject.UserDataDTO;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,6 +49,17 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(new AuthResponseDTO(false, "Internal server error", null));
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDataDTO> getCurrentUser(Authentication authentication) {
+        try {
+            UserDataDTO response = new UserDataDTO(true, "User fetched successfully", null, null,
+                    authentication.getName());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new UserDataDTO(false, "Internal server error", null, null, null));
         }
     }
 
