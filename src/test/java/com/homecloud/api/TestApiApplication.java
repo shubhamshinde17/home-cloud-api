@@ -1,4 +1,4 @@
-package com.home_cloud.api;
+package com.homecloud.api;
 
 import org.springframework.boot.SpringApplication;
 

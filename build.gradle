@@ -5,7 +5,7 @@ plugins {
 	id 'org.asciidoctor.jvm.convert' version '4.0.5'
 }
 
-group = 'com.home-cloud'
+group = 'com.homecloud'
 version = '0.0.1-SNAPSHOT'
 description = 'Home Cloud API'
 
@@ -30,6 +30,7 @@ ext {
 }
 
 dependencies {
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
