@@ -13,7 +13,7 @@ services:
       - postgres
       - rabbitmq
     volumes:
-      - /home/shubham/home-cloud-storage:${STORAGE_PATH}
+      - D:/homecloud-storage:${STORAGE_PATH}
 
   postgres:
     image: postgres:latest

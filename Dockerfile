@@ -1,8 +1,13 @@
 # ---- Build stage ----
 FROM eclipse-temurin:17-jdk AS builder
+
 WORKDIR /app
-COPY . .
-RUN ./gradlew clean bootJar
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+RUN ./gradlew --no-daemon dependencies
+COPY src src
+RUN ./gradlew --no-daemon clean bootJar
 
 # ---- Runtime stage ----
 FROM eclipse-temurin:17-jre

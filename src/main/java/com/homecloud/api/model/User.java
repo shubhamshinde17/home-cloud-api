@@ -1,10 +1,13 @@
 package com.homecloud.api.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -29,6 +32,9 @@ public class User {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "user")
+    private List<UploadLog> uploadLogs;
 
     // Getters and Setters
     public Long getId() {
@@ -77,6 +83,14 @@ public class User {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public List<UploadLog> getUploadLogs() {
+        return uploadLogs;
+    }
+
+    public void setUploadLogs(List<UploadLog> uploadLogs) {
+        this.uploadLogs = uploadLogs;
     }
 
     @Override
