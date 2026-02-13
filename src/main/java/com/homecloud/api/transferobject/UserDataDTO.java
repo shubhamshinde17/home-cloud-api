@@ -1,5 +1,7 @@
 package com.homecloud.api.transferobject;
 
+import com.homecloud.api.model.User;
+
 public class UserDataDTO extends ResponseDTO {
     private String firstName;
     private String lastName;
@@ -34,6 +36,11 @@ public class UserDataDTO extends ResponseDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public static UserDataDTO fromUser(User user) {
+        return new UserDataDTO(true, "User data retrieved successfully", user.getFirstName(), user.getLastName(),
+                user.getEmail());
     }
 
 }

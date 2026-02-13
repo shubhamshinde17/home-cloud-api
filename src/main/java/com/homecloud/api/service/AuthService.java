@@ -2,6 +2,7 @@ package com.homecloud.api.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import com.homecloud.api.model.User;
 import com.homecloud.api.repository.UserRepository;
@@ -24,14 +25,20 @@ public class AuthService {
     public AuthResponseDTO authenticate(String email, String password) {
         var user = userRepository.findByEmail(email);
         if (user == null) {
-            return new AuthResponseDTO(false, "User not found", null);
+            return new AuthResponseDTO(false, "User not found", null, password, null);
         }
         if (verifyPassword(password, user.getPassword())) {
-            String token = jwtUtil.generateToken(user.getEmail());
-            return new AuthResponseDTO(true, "Authentication successful", token);
+            String token = jwtUtil.generateToken(user);
+            String refreshToken = jwtUtil.generateRefreshToken(user);
+            return new AuthResponseDTO(true, "Authentication successful", token, refreshToken, 9000L);
         } else {
-            return new AuthResponseDTO(false, "Invalid password", null);
+            return new AuthResponseDTO(false, "Invalid password", null, password, null);
         }
+    }
+
+    public User getCurrentUser(Authentication authentication) {
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 
     public boolean signupUser(String firstName, String lastName, String email, String password) {
@@ -55,5 +62,9 @@ public class AuthService {
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public void logout(Authentication authentication) {
+        jwtUtil.invalidateToken(authentication);
     }
 }

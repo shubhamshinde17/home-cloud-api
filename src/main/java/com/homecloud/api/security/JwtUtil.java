@@ -4,7 +4,11 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+
+import com.homecloud.api.model.User;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -19,11 +23,22 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(props.getSecret().getBytes());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getEmail())
+                .claim("userId", user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + props.getExpirationMs()))
+                .signWith(key)
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + (props.getExpirationMs() * 4 * 24 * 7)))
+                .claim("type", "refresh")
                 .signWith(key)
                 .compact();
     }
@@ -44,6 +59,10 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    public void invalidateToken(Authentication authentication) {
+        Jwts.builder().setSubject(authentication.getName()).setExpiration(new Date()).signWith(key).compact();
     }
 
 }
