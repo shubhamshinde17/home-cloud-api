@@ -1,0 +1,43 @@
+type Query {
+  authenticate(input: LoginInput!): AuthResponseDTO!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type AuthResponseDTO {
+  success: Boolean!
+  message: String
+  accessToken: String
+  refreshToken: String
+  expiresIn: Float
+  timestamp: String
+}
+
+type User {
+  id: ID!
+  firstName: String
+  lastName: String
+  email: String!
+  isActive: Boolean!
+  uploadLogs: [UploadLog!]!
+}
+
+type TokenLog {
+  id: ID!
+  tokenType: String!
+  deviceInfo: String
+}
+
+type UploadLog {
+  id: ID!
+  name: String!
+  path: String!
+  size: Float
+  isFolder: Boolean!
+  createdAt: String!
+  modifiedAt: String!
+  isDeleted: Boolean!
+}

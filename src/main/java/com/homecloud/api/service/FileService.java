@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Logger;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,20 +16,26 @@ import com.homecloud.api.model.User;
 @Service
 public class FileService {
 
-    @Value("${storage.path}")
-    private String storageRoot;
-
     private UploadLogService uploadLogService;
     private AuthService authService;
+    private UtilService utilService;
+    private Config config;
+    private final Logger logger;
 
-    public FileService(UploadLogService uploadLogService, AuthService authService) {
+    public FileService(UploadLogService uploadLogService, AuthService authService, UtilService utilService,
+            Config config) {
         this.uploadLogService = uploadLogService;
         this.authService = authService;
+        this.utilService = utilService;
+        this.config = config;
+        this.logger = Logger.getLogger(FileService.class.getName());
     }
 
     public UploadLog saveFile(MultipartFile file, String username) throws IOException {
+        String folderId = utilService.generateUUIDFromEmail(username);
+        logger.info("Saving file for user: " + username + " with folderId: " + folderId);
         User user = authService.getUserByEmail(username);
-        Path userDir = Paths.get(storageRoot, username);
+        Path userDir = Paths.get(config.getStoragePath(), folderId);
         Files.createDirectories(userDir);
         Path targetFile = userDir.resolve(file.getOriginalFilename());
         Files.copy(file.getInputStream(), targetFile);
@@ -72,6 +78,14 @@ public class FileService {
     }
 
     public List<UploadLog> listFiles(String username) throws IOException {
+        List<UploadLog> uploadLogs = uploadLogService.getActiveUploadLogsByUsername(username);
+        for (UploadLog uploadLog : uploadLogs) {
+            Path filePath = Paths.get(uploadLog.getPath());
+            if (!Files.exists(filePath)) {
+                uploadLog.setIsDeleted(true);
+                uploadLogService.updateUploadLog(uploadLog);
+            }
+        }
         return uploadLogService.getActiveUploadLogsByUsername(username);
     }
 
