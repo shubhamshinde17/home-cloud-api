@@ -1,12 +1,11 @@
 package com.homecloud.api.transferobject;
 
-public class AuthResponseDTO extends ResponseDTO {
+public class AuthResponseDTO {
     private String accessToken;
     private String refreshToken;
     private Long expiresIn;
 
-    public AuthResponseDTO(boolean success, String message, String accessToken, String refreshToken, Long expiresIn) {
-        super(success, message);
+    public AuthResponseDTO(String accessToken, String refreshToken, Long expiresIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;

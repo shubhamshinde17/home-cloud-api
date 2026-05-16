@@ -2,15 +2,19 @@ package com.homecloud.api.transferobject;
 
 import java.time.LocalDateTime;
 
-public class ResponseDTO {
+public class ResponseDTO<T, U> {
     private boolean success;
     private String message;
     private LocalDateTime timestamp;
+    private T data;
+    private U meta;
 
-    public ResponseDTO(boolean success, String message) {
+    public ResponseDTO(boolean success, String message, T data, U meta) {
         this.success = success;
         this.message = message;
         this.timestamp = LocalDateTime.now();
+        this.data = data;
+        this.meta = meta;
     }
 
     public boolean isSuccess() {
@@ -35,5 +39,21 @@ public class ResponseDTO {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public U getMeta() {
+        return meta;
+    }
+
+    public void setMeta(U meta) {
+        this.meta = meta;
     }
 }

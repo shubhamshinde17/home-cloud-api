@@ -34,7 +34,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ObjectResponseDTO<UploadLog>> uploadFile(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<ObjectResponseDTO<UploadLog, Void>> uploadFile(@RequestParam("file") MultipartFile file,
             Authentication authentication) throws IOException {
 
         UploadLog uploadLog = fileService.saveFile(file, authentication.getName());
@@ -44,7 +44,7 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ObjectResponseDTO<List<UploadLog>>> getFiles(Authentication authentication)
+    public ResponseEntity<ObjectResponseDTO<List<UploadLog>, Void>> getFiles(Authentication authentication)
             throws IOException {
         List<UploadLog> files = fileService.listFiles(authentication.getName());
         return ResponseEntity.ok(
@@ -52,7 +52,7 @@ public class FileController {
     }
 
     @PostMapping("/{uploadLogId}/update")
-    public ResponseEntity<ObjectResponseDTO<UploadLog>> updateFile(@PathParam("uploadLogId") Long uploadLogId,
+    public ResponseEntity<ObjectResponseDTO<UploadLog, Void>> updateFile(@PathParam("uploadLogId") Long uploadLogId,
             @RequestBody HashMap<String, String> updates,
             Authentication authentication) throws IOException {
 
@@ -64,7 +64,7 @@ public class FileController {
     }
 
     @DeleteMapping("/{uploadLogId}/delete")
-    public ResponseEntity<ObjectResponseDTO<String>> deleteFile(@PathParam("uploadLogId") Long uploadLogId,
+    public ResponseEntity<ObjectResponseDTO<String, Void>> deleteFile(@PathParam("uploadLogId") Long uploadLogId,
             Authentication authentication)
             throws IOException {
         fileService.deleteFile(uploadLogId, authentication.getName());

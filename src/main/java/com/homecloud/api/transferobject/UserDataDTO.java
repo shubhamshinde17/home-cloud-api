@@ -2,13 +2,12 @@ package com.homecloud.api.transferobject;
 
 import com.homecloud.api.model.User;
 
-public class UserDataDTO extends ResponseDTO {
+public class UserDataDTO {
     private String firstName;
     private String lastName;
     private String email;
 
     public UserDataDTO(boolean success, String message, String firstName, String lastName, String email) {
-        super(success, message);
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

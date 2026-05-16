@@ -2,13 +2,12 @@ package com.homecloud.api.transferobject;
 
 import java.util.Optional;
 
-public class ObjectResponseDTO<T> extends ResponseDTO {
+public class ObjectResponseDTO<T, MT> {
 
     Optional<T> data;
-    Optional<T> meta;
+    Optional<MT> meta;
 
-    public ObjectResponseDTO(boolean success, String message, Optional<T> data, Optional<T> meta) {
-        super(success, message);
+    public ObjectResponseDTO(boolean success, String message, Optional<T> data, Optional<MT> meta) {
         this.data = data;
         this.meta = meta;
     }
@@ -21,11 +20,11 @@ public class ObjectResponseDTO<T> extends ResponseDTO {
         this.data = data;
     }
 
-    public Optional<T> getMeta() {
+    public Optional<MT> getMeta() {
         return meta;
     }
 
-    public void setMeta(Optional<T> meta) {
+    public void setMeta(Optional<MT> meta) {
         this.meta = meta;
     }
 

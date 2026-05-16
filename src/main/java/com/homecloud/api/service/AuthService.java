@@ -4,10 +4,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 
+import com.homecloud.api.enums.AUTH_MESSAGES;
 import com.homecloud.api.model.User;
 import com.homecloud.api.repository.UserRepository;
 import com.homecloud.api.security.JwtUtil;
 import com.homecloud.api.transferobject.AuthResponseDTO;
+import com.homecloud.api.transferobject.ResponseDTO;
 
 @Service
 public class AuthService {
@@ -22,17 +24,19 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthResponseDTO authenticate(String email, String password) {
+    public ResponseDTO<AuthResponseDTO, Void> authenticate(String email, String password) {
         var user = userRepository.findByEmail(email);
         if (user == null) {
-            return new AuthResponseDTO(false, "User not found", null, password, null);
+            return new ResponseDTO<AuthResponseDTO, Void>(false, AUTH_MESSAGES.USER_NOT_FOUND.toString(), null, null);
         }
         if (verifyPassword(password, user.getPassword())) {
             String token = jwtUtil.generateToken(user);
             String refreshToken = jwtUtil.generateRefreshToken(user);
-            return new AuthResponseDTO(true, "Authentication successful", token, refreshToken, 9000L);
+            return new ResponseDTO<AuthResponseDTO, Void>(true, AUTH_MESSAGES.AUTHENTICATION_SUCCESSFUL.toString(),
+                    new AuthResponseDTO(token, refreshToken, 9000L), null);
         } else {
-            return new AuthResponseDTO(false, "Invalid password", null, password, null);
+            return new ResponseDTO<AuthResponseDTO, Void>(false, AUTH_MESSAGES.INVALID_PASSWORD.toString(),
+                    new AuthResponseDTO(null, null, null), null);
         }
     }
 
