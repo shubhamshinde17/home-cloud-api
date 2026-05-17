@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.homecloud.api.model.UploadLog;
 import com.homecloud.api.service.FileService;
-import com.homecloud.api.transferobject.ObjectResponseDTO;
+import com.homecloud.api.transferobject.ResponseDTO;
 
 import jakarta.websocket.server.PathParam;
 
@@ -34,25 +34,26 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ObjectResponseDTO<UploadLog, Void>> uploadFile(@RequestParam("file") MultipartFile file,
+    public ResponseEntity<ResponseDTO<UploadLog, Void>> uploadFile(@RequestParam("file") MultipartFile file,
             Authentication authentication) throws IOException {
 
         UploadLog uploadLog = fileService.saveFile(file, authentication.getName());
-
-        return ResponseEntity.ok(
-                new ObjectResponseDTO<>(true, "File uploaded successfully", Optional.of(uploadLog), Optional.empty()));
+        ResponseDTO<UploadLog, Void> response = new ResponseDTO<UploadLog, Void>(true, "File uploaded successfully",
+                Optional.of(uploadLog), Optional.empty());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ObjectResponseDTO<List<UploadLog>, Void>> getFiles(Authentication authentication)
+    public ResponseEntity<ResponseDTO<List<UploadLog>, Void>> getFiles(Authentication authentication)
             throws IOException {
         List<UploadLog> files = fileService.listFiles(authentication.getName());
         return ResponseEntity.ok(
-                new ObjectResponseDTO<>(true, "Files retrieved successfully", Optional.of(files), Optional.empty()));
+                new ResponseDTO<List<UploadLog>, Void>(true, "Files retrieved successfully", Optional.of(files),
+                        Optional.empty()));
     }
 
     @PostMapping("/{uploadLogId}/update")
-    public ResponseEntity<ObjectResponseDTO<UploadLog, Void>> updateFile(@PathParam("uploadLogId") Long uploadLogId,
+    public ResponseEntity<ResponseDTO<UploadLog, Void>> updateFile(@PathParam("uploadLogId") Long uploadLogId,
             @RequestBody HashMap<String, String> updates,
             Authentication authentication) throws IOException {
 
@@ -60,16 +61,17 @@ public class FileController {
         String newPath = updates.get("path");
         UploadLog uploadLog = fileService.updateFile(uploadLogId, newFileName, newPath, authentication.getName());
         return ResponseEntity.ok(
-                new ObjectResponseDTO<>(true, "File updated successfully", Optional.of(uploadLog), Optional.empty()));
+                new ResponseDTO<UploadLog, Void>(true, "File updated successfully", Optional.of(uploadLog),
+                        Optional.empty()));
     }
 
     @DeleteMapping("/{uploadLogId}/delete")
-    public ResponseEntity<ObjectResponseDTO<String, Void>> deleteFile(@PathParam("uploadLogId") Long uploadLogId,
+    public ResponseEntity<ResponseDTO<String, Void>> deleteFile(@PathParam("uploadLogId") Long uploadLogId,
             Authentication authentication)
             throws IOException {
         fileService.deleteFile(uploadLogId, authentication.getName());
         return ResponseEntity.ok(
-                new ObjectResponseDTO<>(true, "File deleted successfully", Optional.empty(), Optional.empty()));
+                new ResponseDTO<String, Void>(true, "File deleted successfully", Optional.empty(), Optional.empty()));
     }
 
 }

@@ -1,6 +1,7 @@
 package com.homecloud.api.transferobject;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class ResponseDTO<T, U> {
     private boolean success;
@@ -9,12 +10,12 @@ public class ResponseDTO<T, U> {
     private T data;
     private U meta;
 
-    public ResponseDTO(boolean success, String message, T data, U meta) {
+    public ResponseDTO(boolean success, String message, Optional<T> data, Optional<U> meta) {
         this.success = success;
         this.message = message;
         this.timestamp = LocalDateTime.now();
-        this.data = data;
-        this.meta = meta;
+        this.data = data.orElse(null);
+        this.meta = meta.orElse(null);
     }
 
     public boolean isSuccess() {

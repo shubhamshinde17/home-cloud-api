@@ -2,6 +2,9 @@ package com.homecloud.api.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 
 import com.homecloud.api.enums.AUTH_MESSAGES;
@@ -27,16 +30,17 @@ public class AuthService {
     public ResponseDTO<AuthResponseDTO, Void> authenticate(String email, String password) {
         var user = userRepository.findByEmail(email);
         if (user == null) {
-            return new ResponseDTO<AuthResponseDTO, Void>(false, AUTH_MESSAGES.USER_NOT_FOUND.toString(), null, null);
+            return new ResponseDTO<AuthResponseDTO, Void>(false, AUTH_MESSAGES.USER_NOT_FOUND.toString(),
+                    Optional.empty(), Optional.empty());
         }
         if (verifyPassword(password, user.getPassword())) {
             String token = jwtUtil.generateToken(user);
             String refreshToken = jwtUtil.generateRefreshToken(user);
             return new ResponseDTO<AuthResponseDTO, Void>(true, AUTH_MESSAGES.AUTHENTICATION_SUCCESSFUL.toString(),
-                    new AuthResponseDTO(token, refreshToken, 9000L), null);
+                    Optional.of(new AuthResponseDTO(token, refreshToken, 9000L)), Optional.empty());
         } else {
             return new ResponseDTO<AuthResponseDTO, Void>(false, AUTH_MESSAGES.INVALID_PASSWORD.toString(),
-                    new AuthResponseDTO(null, null, null), null);
+                    Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty());
         }
     }
 

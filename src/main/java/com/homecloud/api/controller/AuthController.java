@@ -1,6 +1,8 @@
 package com.homecloud.api.controller;
 
 import java.util.HashMap;
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,18 +40,18 @@ public class AuthController {
             if (authService.signupUser(firstName, lastName, email, password)) {
                 return ResponseEntity
                         .ok(new ResponseDTO<AuthResponseDTO, Void>(true, AUTH_MESSAGES.USER_REGISTERED.toString(),
-                                new AuthResponseDTO(null, null, null), null));
+                                Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
             } else {
                 return ResponseEntity.status(400)
                         .body(new ResponseDTO<AuthResponseDTO, Void>(false,
-                                AUTH_MESSAGES.USER_ALREADY_EXISTS.toString(), new AuthResponseDTO(null, null, null),
-                                null));
+                                AUTH_MESSAGES.USER_ALREADY_EXISTS.toString(),
+                                Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
             }
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ResponseDTO<AuthResponseDTO, Void>(false,
-                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(), new AuthResponseDTO(null, null, null),
-                            null));
+                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(),
+                            Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
         }
     }
 
@@ -63,8 +65,8 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ResponseDTO<AuthResponseDTO, Void>(false,
-                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(), new AuthResponseDTO(null, null, null),
-                            null));
+                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(),
+                            Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
         }
     }
 
@@ -73,8 +75,9 @@ public class AuthController {
         try {
             if (authentication == null || !authentication.isAuthenticated()) {
                 return ResponseEntity.status(401)
-                        .body(new ResponseDTO<UserDataDTO, Void>(false, COMMON_MESSAGES.UNAUTHORIZED.toString(), null,
-                                null));
+                        .body(new ResponseDTO<UserDataDTO, Void>(false, COMMON_MESSAGES.UNAUTHORIZED.toString(),
+                                Optional.empty(),
+                                Optional.empty()));
             }
             User currentUser = authService.getCurrentUser(authentication);
             if (currentUser != null) {
@@ -82,17 +85,18 @@ public class AuthController {
                         currentUser.getFirstName(),
                         currentUser.getLastName(), currentUser.getEmail());
                 return ResponseEntity.ok(new ResponseDTO<UserDataDTO, Void>(true,
-                        AUTH_MESSAGES.USER_FETCHED_SUCCESSFULLY.toString(), response, null));
+                        AUTH_MESSAGES.USER_FETCHED_SUCCESSFULLY.toString(), Optional.of(response), Optional.empty()));
             } else {
                 return ResponseEntity.status(404)
-                        .body(new ResponseDTO<UserDataDTO, Void>(false, AUTH_MESSAGES.USER_NOT_FOUND.toString(), null,
-                                null));
+                        .body(new ResponseDTO<UserDataDTO, Void>(false, AUTH_MESSAGES.USER_NOT_FOUND.toString(),
+                                Optional.empty(),
+                                Optional.empty()));
             }
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ResponseDTO<UserDataDTO, Void>(false, COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(),
-                            null,
-                            null));
+                            Optional.empty(),
+                            Optional.empty()));
         }
     }
 
@@ -102,11 +106,11 @@ public class AuthController {
             authService.logout(authentication);
             return ResponseEntity
                     .ok(new ResponseDTO<AuthResponseDTO, Void>(true, AUTH_MESSAGES.LOGOUT_SUCCESSFUL.toString(),
-                            new AuthResponseDTO(null, null, null), null));
+                            Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new ResponseDTO<AuthResponseDTO, Void>(false,
-                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(), null, null));
+                            COMMON_MESSAGES.INTERNAL_SERVER_ERROR.toString(), Optional.empty(), Optional.empty()));
         }
     }
 
