@@ -38,9 +38,12 @@ public class AuthController {
             String password = user.get("password");
 
             if (authService.signupUser(firstName, lastName, email, password)) {
+                User newUser = authService.getUserByEmail(email);
+                String token = authService.generateToken(newUser);
+                String refreshToken = authService.generateRefreshToken(newUser);
                 return ResponseEntity
                         .ok(new ResponseDTO<AuthResponseDTO, Void>(true, AUTH_MESSAGES.USER_REGISTERED.toString(),
-                                Optional.of(new AuthResponseDTO(null, null, null)), Optional.empty()));
+                                Optional.of(new AuthResponseDTO(token, refreshToken, 9000L)), Optional.empty()));
             } else {
                 return ResponseEntity.status(400)
                         .body(new ResponseDTO<AuthResponseDTO, Void>(false,
